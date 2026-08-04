@@ -1,0 +1,126 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: #f4f6f8;
+    color: #2c3e50;
+    padding: 40px 20px;
+}
+
+.container {
+    max-width: 700px;
+    margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+    color: #1a2634;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #4a90d9;
+    padding-bottom: 10px;
+}
+
+h2 {
+    margin-top: 30px;
+    margin-bottom: 15px;
+    color: #34495e;
+    font-size: 1.2em;
+}
+
+form {
+    background: #f9fafb;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e1e5e9;
+}
+
+label {
+    font-weight: 600;
+    font-size: 0.9em;
+    color: #556677;
+}
+
+input[type="text"],
+input[type="date"],
+select {
+    width: 100%;
+    padding: 8px 10px;
+    margin-top: 4px;
+    border: 1px solid #ccd3da;
+    border-radius: 5px;
+    font-size: 0.95em;
+}
+
+button {
+    background-color: #4a90d9;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95em;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #3a7bc0;
+}
+
+ul {
+    list-style: none;
+}
+
+li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9fafb;
+    border: 1px solid #e1e5e9;
+    border-radius: 6px;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+li strong {
+    color: #1a2634;
+}
+
+li select {
+    width: auto;
+    padding: 5px 8px;
+}
+
+li button {
+    background-color: #d9534f;
+    padding: 6px 14px;
+    margin-top: 0;
+}
+
+li button:hover {
+    background-color: #c9302c;
+}
+
+.status-Applied {
+    border-left: 4px solid #4a90d9;
+}
+
+.status-Interview {
+    border-left: 4px solid #f0ad4e;
+}
+
+.status-Offer {
+    border-left: 4px solid #5cb85c;
+}
+
+.status-Rejected {
+    border-left: 4px solid #d9534f;
+}

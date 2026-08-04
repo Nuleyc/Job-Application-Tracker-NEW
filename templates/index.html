@@ -3,57 +3,62 @@
 
 <head>
     <title>Job Application Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
-    <h1>Job Application Tracker</h1>
+    <div class="container">
+        <h1>Job Application Tracker</h1>
 
-    <h2>Add a New Application</h2>
-    <form action="/add" method="POST">
-        <label>Company Name:</label><br>
-        <input type="text" name="company_name" required><br><br>
+        <h2>Add a New Application</h2>
+        <form action="/add" method="POST">
+            <label>Company Name:</label><br>
+            <input type="text" name="company_name" required><br><br>
 
-        <label>Position:</label><br>
-        <input type="text" name="position" required><br><br>
+            <label>Position:</label><br>
+            <input type="text" name="position" required><br><br>
 
-        <label>Status:</label><br>
-        <select name="status">
-            <option value="Applied">Applied</option>
-            <option value="Interview">Interview</option>
-            <option value="Offer">Offer</option>
-            <option value="Rejected">Rejected</option>
-        </select><br><br>
+            <label>Status:</label><br>
+            <select name="status">
+                <option value="Applied">Applied</option>
+                <option value="Interview">Interview</option>
+                <option value="Offer">Offer</option>
+                <option value="Rejected">Rejected</option>
+            </select><br><br>
 
-        <label>Date Applied:</label><br>
-        <input type="date" name="date_applied"><br><br>
+            <label>Date Applied:</label><br>
+            <input type="date" name="date_applied"><br><br>
 
-        <button type="submit">Add Application</button>
-    </form>
-
-<h2>Your Applications</h2>
-<ul>
-    {% for job in jobs %}
-    <li>
-        <strong>{{ job.company.name }}</strong> — {{ job.position }}
-        (Status: {{ job.status }}) — Applied: {{ job.date_applied }}
-
-        <form action="/update_status/{{ job.id }}" method="POST" style="display:inline;">
-            <select name="status" onchange="this.form.submit()">
-                <option value="Applied" {% if job.status=="Applied" %}selected{% endif %}>Applied</option>
-                <option value="Interview" {% if job.status=="Interview" %}selected{% endif %}>Interview</option>
-                <option value="Offer" {% if job.status=="Offer" %}selected{% endif %}>Offer</option>
-                <option value="Rejected" {% if job.status=="Rejected" %}selected{% endif %}>Rejected</option>
-            </select>
+            <button type="submit">Add Application</button>
         </form>
 
-        <a href="/delete/{{ job.id }}">
-            <button type="button" onclick="return confirm('Delete this application?')">Delete</button>
-        </a>
-    </li>
-    {% else %}
-    <li>No applications yet.</li>
-    {% endfor %}
-</ul>
+        <h2>Your Applications</h2>
+        <ul>
+            {% for job in jobs %}
+            <li class="status-{{ job.status }}">
+                <div>
+                    <strong>{{ job.company.name }}</strong> — {{ job.position }}<br>
+                    Applied: {{ job.date_applied }}
+                </div>
+
+                <form action="/update_status/{{ job.id }}" method="POST" style="display:inline;">
+                    <select name="status" onchange="this.form.submit()">
+                        <option value="Applied" {% if job.status=="Applied" %}selected{% endif %}>Applied</option>
+                        <option value="Interview" {% if job.status=="Interview" %}selected{% endif %}>Interview</option>
+                        <option value="Offer" {% if job.status=="Offer" %}selected{% endif %}>Offer</option>
+                        <option value="Rejected" {% if job.status=="Rejected" %}selected{% endif %}>Rejected</option>
+                    </select>
+                </form>
+
+                <a href="/delete/{{ job.id }}">
+                    <button type="button">Delete</button>
+                </a>
+            </li>
+            {% else %}
+            <li>No applications yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
 </body>
 
 </html>
