@@ -18,6 +18,7 @@ class Job(db.Model):
     status = db.Column(db.String(50), default="Applied")
     date_applied = db.Column(db.String(20))
     notes = db.Column(db.Text)
+    phone_number = db.Column(db.String(20))  # NEW — optional, can be blank
     company_id = db.Column(db.Integer, db.ForeignKey("company.id"), nullable=False)
 
 # --- Routes ---
@@ -33,8 +34,9 @@ def add_job():
     position = request.form["position"]
     status = request.form["status"]
     date_applied = request.form["date_applied"]
+    notes = request.form.get("notes", "")
+    phone_number = request.form.get("phone_number", "")
 
-    # Check if company already exists, otherwise create it
     company = Company.query.filter_by(name=company_name).first()
     if not company:
         company = Company(name=company_name)
@@ -45,11 +47,41 @@ def add_job():
         position=position,
         status=status,
         date_applied=date_applied,
+        notes=notes,
+        phone_number=phone_number,
         company_id=company.id
     )
     db.session.add(new_job)
     db.session.commit()
 
+    return redirect("/")
+
+
+@app.route("/edit/<int:job_id>")
+def edit_job(job_id):
+    job = Job.query.get_or_404(job_id)
+    return render_template("edit.html", job=job)
+
+
+@app.route("/update/<int:job_id>", methods=["POST"])
+def update_job(job_id):
+    job = Job.query.get_or_404(job_id)
+
+    company_name = request.form["company_name"]
+    company = Company.query.filter_by(name=company_name).first()
+    if not company:
+        company = Company(name=company_name)
+        db.session.add(company)
+        db.session.commit()
+
+    job.company_id = company.id
+    job.position = request.form["position"]
+    job.status = request.form["status"]
+    job.date_applied = request.form["date_applied"]
+    job.notes = request.form.get("notes", "")
+    job.phone_number = request.form.get("phone_number", "")
+
+    db.session.commit()
     return redirect("/")
 
 @app.route("/delete/<int:job_id>")

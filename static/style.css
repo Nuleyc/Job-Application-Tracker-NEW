@@ -124,3 +124,10 @@ li button:hover {
 .status-Rejected {
     border-left: 4px solid #d9534f;
 }
+li button.edit-btn {
+    background-color: #5bc0de;
+}
+
+li button.edit-btn:hover {
+    background-color: #46b8da;
+}

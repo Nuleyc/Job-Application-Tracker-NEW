@@ -28,6 +28,11 @@
 
             <label>Date Applied:</label><br>
             <input type="date" name="date_applied"><br><br>
+            <label>Phone Number (optional):</label><br>
+            <input type="text" name="phone_number" placeholder="Leave blank if unknown"><br><br>
+            
+            <label>Notes:</label><br>
+            <textarea name="notes" rows="3" style="width:100%;"></textarea><br><br>
 
             <button type="submit">Add Application</button>
         </form>
@@ -39,8 +44,10 @@
                 <div>
                     <strong>{{ job.company.name }}</strong> — {{ job.position }}<br>
                     Applied: {{ job.date_applied }}
+                    {% if job.phone_number %} | Phone: {{ job.phone_number }}{% endif %}
+                    {% if job.notes %}<br><em>Notes: {{ job.notes }}</em>{% endif %}
                 </div>
-
+            
                 <form action="/update_status/{{ job.id }}" method="POST" style="display:inline;">
                     <select name="status" onchange="this.form.submit()">
                         <option value="Applied" {% if job.status=="Applied" %}selected{% endif %}>Applied</option>
@@ -49,10 +56,9 @@
                         <option value="Rejected" {% if job.status=="Rejected" %}selected{% endif %}>Rejected</option>
                     </select>
                 </form>
-
-                <a href="/delete/{{ job.id }}">
-                    <button type="button">Delete</button>
-                </a>
+            
+                <a href="/edit/{{ job.id }}"><button type="button" class="edit-btn">Edit</button></a>
+                <a href="/delete/{{ job.id }}"><button type="button">Delete</button></a>
             </li>
             {% else %}
             <li>No applications yet.</li>
