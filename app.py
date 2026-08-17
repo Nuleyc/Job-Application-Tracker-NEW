@@ -5,6 +5,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 import os
+import webbrowser
+from threading import Timer
 
 load_dotenv()
 
@@ -142,10 +144,14 @@ def test_reminder():
     check_and_send_reminders()
     return "Reminder check triggered! Check your email (if any applications are 7+ days old with 'Applied' status)."
 
-scheduler = BackgroundScheduler()
-scheduler.add_job(func=check_and_send_reminders, trigger="interval", hours=24)
-scheduler.start()
+def open_browser():
+    webbrowser.open_new("http://127.0.0.1:5000/")
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(func=check_and_send_reminders, trigger="interval", hours=24)
+    scheduler.start()
+    Timer(1.5, open_browser).start()
+    app.run(debug=False)
