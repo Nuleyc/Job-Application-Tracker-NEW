@@ -31,7 +31,7 @@ Version Control
 
 Running the Project
 
-Option 1: Run the desktop app (easiest)
+Run the desktop app 
 Download app.exe from the Releases section of this repo (or wherever you host it)
 Double-click app.exe
 Your browser will open automatically to the app — no installation required
