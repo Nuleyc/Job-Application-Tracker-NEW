@@ -1,8 +1,26 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail, Message
+from apscheduler.schedulers.background import BackgroundScheduler
+from dotenv import load_dotenv
+from datetime import datetime, timedelta
+import os
 
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///tracker.db"
+load_dotenv()
+
+app = Flask(__name__)          # <-- app must be created FIRST
+
+app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USE_TLS"] = True
+app.config["MAIL_USE_SSL"] = False
+app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
+app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
+app.config["MAIL_DEFAULT_SENDER"] = os.getenv("MAIL_USERNAME")
+
+mail = Mail(app)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///tracker.db"   # <-- your original DB config
 db = SQLAlchemy(app)
 
 # --- Database Models ---
@@ -20,6 +38,27 @@ class Job(db.Model):
     notes = db.Column(db.Text)
     phone_number = db.Column(db.String(20))  # NEW — optional, can be blank
     company_id = db.Column(db.Integer, db.ForeignKey("company.id"), nullable=False)
+
+def check_and_send_reminders():
+    with app.app_context():
+        cutoff_date = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
+        stale_jobs = Job.query.filter(
+            Job.status == "Applied",
+            Job.date_applied <= cutoff_date
+        ).all()
+
+        if stale_jobs:
+            body_lines = ["The following applications haven't been updated in 7+ days:\n"]
+            for job in stale_jobs:
+                body_lines.append(f"- {job.company.name}: {job.position} (Applied {job.date_applied})")
+
+            msg = Message(
+                subject="Job Tracker: Follow-up Reminders",
+                recipients=[os.getenv("MAIL_USERNAME")],
+                body="\n".join(body_lines)
+            )
+            mail.send(msg)
+            print(f"Sent reminder email for {len(stale_jobs)} application(s).")
 
 # --- Routes ---
 
@@ -98,6 +137,14 @@ def update_status(job_id):
     db.session.commit()
     return redirect("/")
 
+@app.route("/test_reminder")
+def test_reminder():
+    check_and_send_reminders()
+    return "Reminder check triggered! Check your email (if any applications are 7+ days old with 'Applied' status)."
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=check_and_send_reminders, trigger="interval", hours=24)
+scheduler.start()
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
